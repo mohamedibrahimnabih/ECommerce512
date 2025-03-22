@@ -7,7 +7,7 @@ namespace ECommerce512.Controllers
         public IActionResult Home()
         {
             // Data
-            string name = "Mohamed Ashraf";
+            string name = "Mohamed Ali";
             int age = 15;
             double salary = 5000;
 
