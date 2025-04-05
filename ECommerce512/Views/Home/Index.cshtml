@@ -28,7 +28,14 @@
                             {
                                 foreach (var item in categories)
                                 {
-                                    <option value="@item.Id">@item.Name</option>
+                                    if (item.Id == ViewBag.categoryId)
+                                    {
+                                        <option value="@item.Id" selected>@item.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
                                 }
                             }
                         }
@@ -37,15 +44,15 @@
 
                 <!-- Search by Name -->
                 <div class="col-md-3">
-                    <input type="text" class="form-control" placeholder="Search by" name="query"/>
+                    <input type="text" class="form-control" placeholder="Search by" name="query" value="@ViewBag.query" />
                 </div>
 
                 <!-- Price Range Filter -->
                 <div class="col-md-2">
-                    <input type="number" class="form-control" placeholder="Min Price" name="minPrice" />
+                    <input type="number" class="form-control" placeholder="Min Price" name="minPrice" value="@ViewBag.minPrice" />
                 </div>
                 <div class="col-md-2">
-                    <input type="number" class="form-control" placeholder="Max Price" name="maxPrice" />
+                    <input type="number" class="form-control" placeholder="Max Price" name="maxPrice" value="@ViewBag.maxPrice" />
                 </div>
 
                 @* <!-- Hot Product Checkbox --> *@
@@ -65,6 +72,7 @@
     </div>
 </section>
 
+<!-- Section -->
 @if(Model.Count() == 0)
 {
     <div class="row my-3">
@@ -75,7 +83,6 @@
 }
 else
 {
-    <!-- Section-->
     <div class="container">
         <section class="py-5">
             <div class="container px-4 px-lg-5 mt-5">
@@ -123,3 +130,20 @@ else
         </section>
     </div>
 }
+
+
+<!-- Pagination -->
+<div class="row">
+    <div class="col-12 d-flex justify-content-center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+
+                @for (int i = 1; i <= ViewBag.TotalCountOfProduct ; i++)
+                {
+                    <li class="page-item"><a class="page-link" href="/Home/Index?page=@i">@i</a></li>
+                }
+                
+            </ul>
+        </nav>
+    </div>
+</div>

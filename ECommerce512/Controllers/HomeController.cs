@@ -17,22 +17,40 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    public IActionResult Index(int categoryId, string? query, double minPrice, double maxPrice)
+    public IActionResult Index(int categoryId, string? query, double minPrice, double maxPrice, int page = 1)
         {
         IQueryable<Product> products = _context.Products.Include(e => e.Category);
 
         var categories = _context.Categories;
         ViewData["categories"] = categories.ToList();
+        //ViewBag.categories = categories.ToList();
 
         if (categoryId > 0 && categoryId < categories.Count())
         {
             products = products.Where(e => e.CategoryId == categoryId);
+            ViewBag.categoryId = categoryId;
         }
 
-        if(query is not null)
+        if (query is not null)
         {
             products = products.Where(e => e.Name.Contains(query));
+            ViewBag.query = query;
         }
+
+        if (minPrice > 0)
+        {
+            products = products.Where(e => e.Price >= (decimal)minPrice);
+            ViewBag.minPrice = minPrice;
+        }
+
+        if (maxPrice > 0)
+        {
+            products = products.Where(e => e.Price <= (decimal)maxPrice);
+            ViewBag.maxPrice = maxPrice;
+        }
+
+        products = products.Skip((page - 1) * 8).Take(8);
+        ViewBag.TotalCountOfProduct = Math.Ceiling(_context.Products.Count() / 8.0);
 
         return View(products.ToList());
     }
@@ -43,9 +61,9 @@ public class HomeController : Controller
 
         if(product is not null)
         {
-            var relatedProducts = _context.Products.Include(e => e.Category).Where(e => e.Name.Contains(product.Name.Substring(0, 5))).Skip(0).Take(4).ToList();
+            var relatedProducts = _context.Products.Include(e => e.Category).Where(e => e.Name.Contains(product.Name.Substring(0, 5)) && e.Id != id).Skip(0).Take(4).ToList();
 
-            var sameCategory = _context.Products.Include(e => e.Category).Where(e => e.CategoryId == product.CategoryId).Skip(0).Take(4).ToList();
+            var sameCategory = _context.Products.Include(e => e.Category).Where(e => e.CategoryId == product.CategoryId && e.Id != id).Skip(0).Take(4).ToList();
 
             var returnedData = new ProductWithRelatedVM()
             {
