@@ -17,27 +17,41 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    public IActionResult Index()
-    {
-        var products = _context.Products.Include(e => e.Category);
+    public IActionResult Index(int categoryId, string? query, double minPrice, double maxPrice)
+        {
+        IQueryable<Product> products = _context.Products.Include(e => e.Category);
 
-        // More Logic
+        var categories = _context.Categories;
+        ViewData["categories"] = categories.ToList();
+
+        if (categoryId > 0 && categoryId < categories.Count())
+        {
+            products = products.Where(e => e.CategoryId == categoryId);
+        }
+
+        if(query is not null)
+        {
+            products = products.Where(e => e.Name.Contains(query));
+        }
 
         return View(products.ToList());
     }
 
     public IActionResult Details(int id)
     {
-        var product = _context.Products.FirstOrDefault(e => e.Id == id);
+        var product = _context.Products.Find(id);
 
         if(product is not null)
         {
             var relatedProducts = _context.Products.Include(e => e.Category).Where(e => e.Name.Contains(product.Name.Substring(0, 5))).Skip(0).Take(4).ToList();
 
+            var sameCategory = _context.Products.Include(e => e.Category).Where(e => e.CategoryId == product.CategoryId).Skip(0).Take(4).ToList();
+
             var returnedData = new ProductWithRelatedVM()
             {
                 Product = product,
-                RelatedProducts = relatedProducts
+                RelatedProducts = relatedProducts,
+                SameCategory = sameCategory
             };
 
             return View(returnedData);

@@ -4,5 +4,6 @@
     {
         public Product Product { get; set; } = null!;
         public List<Product> RelatedProducts { get; set; } = null!;
+        public List<Product> SameCategory { get; set; } = null!;
     }
 }

@@ -13,45 +13,113 @@
         </div>
     </div>
 </header>
-<!-- Section-->
-<div class="container">
-    <section class="py-5">
-        <div class="container px-4 px-lg-5 mt-5">
-            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                @foreach (var item in Model)
-                {
-                    <div class="col mb-5">
-                        <div class="card h-100">
-                            <!-- Sale badge-->
-                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">@item.Category.Name</div>
-                            <!-- Product image-->
-                            <a href="/Home/Details/@item.Id"><img class="card-img-top" src="~/images/@item.MainImg" alt="..." /></a>
-                            <!-- Product details-->
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder">@item.Name</h5>
-                                    <!-- Product reviews-->
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
-                                        <div class="bi-star-fill"></div>
+
+<!-- Filter Section -->
+<section class="py-4 bg-light">
+    <div class="container px-4 px-lg-5">
+        <form action="/Home/Index">
+            <div class="row">
+                <!-- Category Filter -->
+                <div class="col-md-3">
+                    <select name="categoryId" class="form-select">
+                        <option>All Categories</option>
+                        @{
+                            if (ViewData["categories"] is List<Category> categories)
+                            {
+                                foreach (var item in categories)
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            }
+                        }
+                    </select>
+                </div>
+
+                <!-- Search by Name -->
+                <div class="col-md-3">
+                    <input type="text" class="form-control" placeholder="Search by" name="query"/>
+                </div>
+
+                <!-- Price Range Filter -->
+                <div class="col-md-2">
+                    <input type="number" class="form-control" placeholder="Min Price" name="minPrice" />
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control" placeholder="Max Price" name="maxPrice" />
+                </div>
+
+                @* <!-- Hot Product Checkbox --> *@
+                @* <div class="col-md-1"> *@
+                @*     <div class="form-check"> *@
+                @*         <input type="checkbox" class="form-check-input"> *@
+                @*         <label class="form-check-label">Hot</label> *@
+                @*     </div> *@
+                @* </div> *@
+
+                <!-- Submit Button -->
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-dark w-100">Filter</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+@if(Model.Count() == 0)
+{
+    <div class="row my-3">
+        <div class="col-12 d-flex justify-content-center">
+            <h1 class="display-4">No Items</h1>
+        </div>
+    </div>
+}
+else
+{
+    <!-- Section-->
+    <div class="container">
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col mb-5">
+                            <div class="card h-100">
+                                <!-- Sale badge-->
+                                <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">@item.Category.Name</div>
+                                <!-- Discount badge-->
+                                @if (item.Discount >= 50)
+                                {
+                                    <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; left: 0.5rem">Hot (@item.Discount%)</div>
+                                }
+                                <!-- Product image-->
+                                <a href="/Home/Details/@item.Id"><img class="card-img-top" src="~/images/@item.MainImg" alt="..." /></a>
+                                <!-- Product details-->
+                                <div class="card-body p-4">
+                                    <div class="text-center">
+                                        <!-- Product name-->
+                                        <h5 class="fw-bolder">@item.Name</h5>
+                                        <!-- Product reviews-->
+                                        <div class="d-flex justify-content-center small text-warning mb-2">
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                        </div>
+                                        <!-- Product price-->
+                                        <span class="text-muted text-decoration-line-through">@item.Price.ToString("c")</span>
+                                        @((item.Price - (item.Discount / 100 * item.Price)).ToString("c"))
                                     </div>
-                                    <!-- Product price-->
-                                    <span class="text-muted text-decoration-line-through">@item.Price.ToString("c")</span>
-                                    @((item.Price - (item.Discount/100*item.Price)).ToString("c"))
+                                </div>
+                                <!-- Product actions-->
+                                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/Home/Details/@item.Id">Show Details</a></div>
                                 </div>
                             </div>
-                            <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/Home/Details/@item.Id">Show Details</a></div>
-                            </div>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
             </div>
-        </div>
-    </section>
-</div>
+        </section>
+    </div>
+}
