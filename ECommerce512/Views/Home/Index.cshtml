@@ -25,7 +25,7 @@
                             <!-- Sale badge-->
                             <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">@item.Category.Name</div>
                             <!-- Product image-->
-                            <img class="card-img-top" src="~/images/@item.MainImg" alt="..." />
+                            <a href="/Home/Details/@item.Id"><img class="card-img-top" src="~/images/@item.MainImg" alt="..." /></a>
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -40,13 +40,13 @@
                                         <div class="bi-star-fill"></div>
                                     </div>
                                     <!-- Product price-->
-                                    <span class="text-muted text-decoration-line-through">@item.Discount</span>
-                                    @item.Price
+                                    <span class="text-muted text-decoration-line-through">@item.Price.ToString("c")</span>
+                                    @((item.Price - (item.Discount/100*item.Price)).ToString("c"))
                                 </div>
                             </div>
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/Home/Details/@item.Id">Show Details</a></div>
                             </div>
                         </div>
                     </div>
