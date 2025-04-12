@@ -29,5 +29,47 @@ namespace ECommerce512.Areas.Admin.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        public IActionResult Edit(int id)
+        {
+            var category = _context.Categories.Find(id);
+
+            if(category is not null)
+            {
+                return View(category);
+            }
+
+            return RedirectToAction("NotFoundPage", "Home");
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Category category)
+        {
+            var categoryInDb = _context.Categories.Find(category.Id);
+
+            if (categoryInDb is not null)
+            {
+                _context.Categories.Update(category);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return RedirectToAction("NotFoundPage", "Home");
+        }
+
+        public IActionResult Delete(int id)
+        {
+            var category = _context.Categories.Find(id);
+
+            if (category is not null)
+            {
+                _context.Remove(category);
+                _context.SaveChanges();
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            return RedirectToAction("NotFoundPage", "Home");
+        }
     }
 }

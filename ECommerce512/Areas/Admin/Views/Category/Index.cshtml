@@ -36,7 +36,7 @@
                                 @if (!string.IsNullOrEmpty(item.Description) && item.Description.Length > 50)
                                 {
                                     @item.Description.Substring(0, 50)
-}
+                                }
                                 else
                                 {
                                     @item.Description
@@ -48,8 +48,8 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="#" class="btn btn-warning btn-sm me-1">Edit</a>
-                                <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                                <a href="/Admin/Category/Edit/@item.Id" class="btn btn-warning btn-sm me-1">Edit</a>
+                                <button class="btn btn-danger btn-sm" onclick="confirmDelete(@item.Id)">Delete</button>
                             </td>
                         </tr>
                     }
@@ -58,3 +58,24 @@
         </div>
     </div>
 </div>
+
+<!-- SweetAlert2 Delete Confirmation Script -->
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won’t be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = `/Admin/Category/Delete/${id}`;
+            }
+        });
+    }
+</script>
