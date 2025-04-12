@@ -17,7 +17,7 @@
 <!-- Filter Section -->
 <section class="py-4 bg-light">
     <div class="container px-4 px-lg-5">
-        <form action="/Home/Index">
+        <form action="/Customer/Home/Index">
             <div class="row">
                 <!-- Category Filter -->
                 <div class="col-md-3">
@@ -120,7 +120,7 @@ else
                                 </div>
                                 <!-- Product actions-->
                                 <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/Home/Details/@item.Id">Show Details</a></div>
+                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="/Customer/Home/Details/@item.Id">Show Details</a></div>
                                 </div>
                             </div>
                         </div>
@@ -140,7 +140,7 @@ else
 
                 @for (int i = 1; i <= ViewBag.TotalCountOfProduct ; i++)
                 {
-                    <li class="page-item"><a class="page-link" href="/Home/Index?page=@i">@i</a></li>
+                    <li class="page-item"><a class="page-link" href="/Customer/Home/Index?page=@i">@i</a></li>
                 }
                 
             </ul>
