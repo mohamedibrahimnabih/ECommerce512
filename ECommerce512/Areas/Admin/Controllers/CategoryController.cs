@@ -1,6 +1,8 @@
 ﻿using ECommerce512.Data;
 using ECommerce512.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Drawing.Drawing2D;
 
 namespace ECommerce512.Areas.Admin.Controllers
 {
@@ -39,13 +41,13 @@ namespace ECommerce512.Areas.Admin.Controllers
                 return View(category);
             }
 
-            return RedirectToAction("NotFoundPage", "Home");
+            return View();
         }
 
         [HttpPost]
         public IActionResult Edit(Category category)
         {
-            var categoryInDb = _context.Categories.Find(category.Id);
+            var categoryInDb = _context.Categories.AsNoTracking().FirstOrDefault(e => e.Id == category.Id);
 
             if (categoryInDb is not null)
             {
