@@ -5,8 +5,9 @@ using ECommerce512.Data;
 using Microsoft.EntityFrameworkCore;
 using ECommerce512.Models.ViewModels;
 
-namespace ECommerce512.Controllers;
+namespace ECommerce512.Areas.Customer.Controllers;
 
+[Area("Customer")]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
