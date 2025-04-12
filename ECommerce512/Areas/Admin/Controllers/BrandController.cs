@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce512.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class BrandController : Controller
     {
         private readonly ApplicationDbContext _context = new();
