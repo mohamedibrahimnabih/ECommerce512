@@ -1,4 +1,4 @@
-﻿using ECommerce512.Data;
+﻿    using ECommerce512.Data;
 using ECommerce512.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,16 +20,21 @@ namespace ECommerce512.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            return View(new Category());
         }
 
         [HttpPost]
         public IActionResult Create(Category category)
         {
-            _context.Categories.Add(category);
-            _context.SaveChanges();
+            if(ModelState.IsValid)
+            {
+                _context.Categories.Add(category);
+                _context.SaveChanges();
 
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(category);
         }
 
         public IActionResult Edit(int id)
@@ -41,22 +46,20 @@ namespace ECommerce512.Areas.Admin.Controllers
                 return View(category);
             }
 
-            return View();
+            return RedirectToAction("NotFoundPage", "Home");
         }
 
         [HttpPost]
         public IActionResult Edit(Category category)
         {
-            var categoryInDb = _context.Categories.AsNoTracking().FirstOrDefault(e => e.Id == category.Id);
-
-            if (categoryInDb is not null)
+            if(ModelState.IsValid)
             {
                 _context.Categories.Update(category);
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
 
-            return RedirectToAction("NotFoundPage", "Home");
+            return View(category);
         }
 
         public IActionResult Delete(int id)

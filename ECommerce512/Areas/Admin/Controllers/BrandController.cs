@@ -12,9 +12,9 @@ namespace ECommerce512.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            var Brands = _context.Brands;
+            var brands = _context.Brands;
 
-            return View(Brands.ToList());
+            return View(brands.ToList());
         }
 
         public IActionResult Create()
@@ -25,6 +25,7 @@ namespace ECommerce512.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Create(Brand brand)
         {
+
             _context.Brands.Add(brand);
             _context.SaveChanges();
 
@@ -35,7 +36,7 @@ namespace ECommerce512.Areas.Admin.Controllers
         {
             var brand = _context.Brands.Find(id);
 
-            if (brand is not null)
+            if(brand is not null)
             {
                 return View(brand);
             }
@@ -46,16 +47,9 @@ namespace ECommerce512.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Edit(Brand brand)
         {
-            var brandInDb = _context.Brands.AsNoTracking().FirstOrDefault(e => e.Id == brand.Id);
-
-            if (brandInDb is not null)
-            {
-                _context.Brands.Update(brand);
-                _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
-            }
-
-            return RedirectToAction("NotFoundPage", "Home");
+            _context.Brands.Update(brand);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Delete(int id)

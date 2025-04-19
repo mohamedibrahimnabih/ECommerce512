@@ -7,15 +7,23 @@
 
     <div class="row">
         <div class="col-12">
-            <form action="/Admin/Brand/Create" method="post">
-                <input type="hidden" name="status" value="True" />
+            <form method="post">
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="name" name="name">
+                    <input type="text" class="form-control" id="name" name="Name">
                 </div>
                 <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <input type="text" class="form-control" id="description" name="description">
+                    <div class="form-floating">
+                        <textarea class="form-control" placeholder="Leave a description here" id="description" style="height: 100px" name="Description"></textarea>
+                        <label for="description">Description</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" name="Status">
+                        <option value="true">ON</option>
+                        <option value="false">OFF</option>
+                    </select>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>

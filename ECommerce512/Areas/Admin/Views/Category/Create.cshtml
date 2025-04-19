@@ -1,4 +1,6 @@
-﻿<div class="container mt-4">
+﻿@model Category
+
+<div class="container mt-4">
     <div class="row mb-3 align-items-center">
         <div class="col-md-12">
             <h2 class="display-6">Create a New Category</h2>
@@ -7,18 +9,43 @@
 
     <div class="row">
         <div class="col-12">
-            <form action="/Admin/Category/Create" method="post">
-                <input type="hidden" name="status" value="True" />
+            <form method="post">
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="name" name="name">
+                    <input type="text" class="form-control" asp-for="Name">
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <input type="text" class="form-control" id="description" name="description">
+                    <div class="form-floating">
+                        <textarea class="form-control" placeholder="Leave a description here" id="description" style="height: 100px" name="Description">@Model.Description</textarea>
+                        <label for="description">Description</label>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" name="Status">
+                        @if (!Model.Status)
+                        {
+                            <option value="true">ON</option>
+                            <option value="false" selected>OFF</option>
+                        }
+                        else
+                        {
+                            <option value="true" selected>ON</option>
+                            <option value="false">OFF</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial">
+
+}
