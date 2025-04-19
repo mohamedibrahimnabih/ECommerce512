@@ -19,17 +19,21 @@ namespace ECommerce512.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            return View(new Brand());
         }
 
         [HttpPost]
         public IActionResult Create(Brand brand)
         {
+            if(ModelState.IsValid)
+            {
+                _context.Brands.Add(brand);
+                _context.SaveChanges();
 
-            _context.Brands.Add(brand);
-            _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
 
-            return RedirectToAction(nameof(Index));
+            return View(brand);
         }
 
         public IActionResult Edit(int id)
@@ -41,15 +45,20 @@ namespace ECommerce512.Areas.Admin.Controllers
                 return View(brand);
             }
 
-            return View();
+            return RedirectToAction("NotFoundPage", "Home");
         }
 
         [HttpPost]
         public IActionResult Edit(Brand brand)
         {
-            _context.Brands.Update(brand);
-            _context.SaveChanges();
-            return RedirectToAction(nameof(Index));
+            if(ModelState.IsValid)
+            {
+                _context.Brands.Update(brand);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(brand);
         }
 
         public IActionResult Delete(int id)
