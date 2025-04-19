@@ -10,7 +10,7 @@
         public int Quantity { get; set; }
         public double Rate { get; set; }
         public bool Status { get; set; }
-        //public long Traffic { get; set; }
+        public long Traffic { get; set; }
         public decimal Discount { get; set; }
         public int CategoryId { get; set; }
         public Category Category { get; set; } = null!;

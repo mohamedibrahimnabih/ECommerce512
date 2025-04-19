@@ -62,16 +62,25 @@ public class HomeController : Controller
 
         if(product is not null)
         {
-            var relatedProducts = _context.Products.Include(e => e.Category).Where(e => e.Name.Contains(product.Name.Substring(0, 5)) && e.Id != id).Skip(0).Take(4).ToList();
+            var relatedProducts = _context.Products.Include(e => e.Category).Where(e => e.Name.Contains(product.Name.Substring(0, 5)) && e.Id != id).Skip(0).Take(4);
 
-            var sameCategory = _context.Products.Include(e => e.Category).Where(e => e.CategoryId == product.CategoryId && e.Id != id).Skip(0).Take(4).ToList();
+            var sameCategory = _context.Products.Include(e => e.Category).Where(e => e.CategoryId == product.CategoryId && e.Id != id).Skip(0).Take(4);
+
+            var topProducts = _context.Products.OrderByDescending(e => e.Traffic).Where(e => e.Id != id).Skip(0).Take(4);
 
             var returnedData = new ProductWithRelatedVM()
             {
                 Product = product,
-                RelatedProducts = relatedProducts,
-                SameCategory = sameCategory
+                RelatedProducts = relatedProducts.ToList(),
+                SameCategory = sameCategory.ToList(),
+                TopProducts = topProducts.ToList()
             };
+
+            product.Traffic++;
+            _context.SaveChanges();
+
+            //ViewData["topProducts"] = topProducts.ToList();
+            //ViewBag.topProducts = topProducts.ToList();
 
             return View(returnedData);
         }
