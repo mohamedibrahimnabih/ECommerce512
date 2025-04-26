@@ -4,6 +4,7 @@ using ECommerce512.Models.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace ECommerce512.Areas.Admin.Controllers
 {
@@ -174,10 +175,41 @@ namespace ECommerce512.Areas.Admin.Controllers
 
             if (product is not null)
             {
+                var oldFileName = product.MainImg;
+                var oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", oldFileName);
+
+                if (System.IO.File.Exists(oldPath))
+                {
+                    System.IO.File.Delete(oldPath);
+                }
+
                 _context.Remove(product);
                 _context.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
+            }
+
+            return RedirectToAction("NotFoundPage", "Home");
+        }
+
+        public IActionResult DeleteImg(int id)
+        {
+            var product = _context.Products.Find(id);
+
+            if (product is not null)
+            {
+                var oldFileName = product.MainImg;
+                var oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", oldFileName);
+
+                if (System.IO.File.Exists(oldPath))
+                {
+                    System.IO.File.Delete(oldPath);
+                }
+
+                product.MainImg = "defaultImg.png";
+                _context.SaveChanges();
+
+                return RedirectToAction(nameof(Edit), new { id = id });
             }
 
             return RedirectToAction("NotFoundPage", "Home");

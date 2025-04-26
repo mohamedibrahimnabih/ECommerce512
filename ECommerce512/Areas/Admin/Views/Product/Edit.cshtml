@@ -30,8 +30,10 @@
                     @* Show existing image if any *@
                     <img id="imgPreview" src="~/images/@(string.IsNullOrEmpty(Model.Product.MainImg) ? "#" : Url.Content(Model.Product.MainImg))"
                          alt="Image Preview"
-                         class="img-thumbnail mt-2"
+                         class="img-thumbnail my-2"
                          style="@(string.IsNullOrEmpty(Model.Product.MainImg) ? "display: none;" : "display: block;") max-height: 200px;" />
+                            <a class="btn btn-danger" href="/Admin/Product/DeleteImg/@Model.Product.Id">Delete</a>
+                            @* <a class="btn btn-warning" href="/Admin/Product/DeleteImg/@Model.Product.Id">Replace</a> *@
                 </div>
                 <div class="mb-3">
                     <label for="Price" class="form-label">Price</label>
