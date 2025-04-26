@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using System.Threading.Tasks;
 
 namespace ECommerce512.Areas.Admin.Controllers
 {
@@ -49,7 +50,7 @@ namespace ECommerce512.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Product product, IFormFile MainImg)
+        public async Task<IActionResult> Create(Product product, IFormFile MainImg)
         {
             //ModelState.Remove("product.Brand");
             //ModelState.Remove("product.Category");
@@ -63,14 +64,14 @@ namespace ECommerce512.Areas.Admin.Controllers
 
                 using (var stream = System.IO.File.Create(filePath))
                 {
-                    MainImg.CopyTo(stream);
+                    await MainImg.CopyToAsync(stream);
                 }
 
                 // Update img in Db
                 product.MainImg = fileName;
 
-                _context.Products.Add(product);
-                _context.SaveChanges();
+                await _context.Products.AddAsync(product);
+                await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }
