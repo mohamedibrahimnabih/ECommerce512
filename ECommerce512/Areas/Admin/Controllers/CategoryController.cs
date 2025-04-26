@@ -1,6 +1,7 @@
 ﻿    using ECommerce512.Data;
 using ECommerce512.Models;
 using ECommerce512.Repositories;
+using ECommerce512.Repositories.IRepositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing.Drawing2D;
@@ -12,7 +13,7 @@ namespace ECommerce512.Areas.Admin.Controllers
     public class CategoryController : Controller
     {
         //private readonly ApplicationDbContext _context = new();
-        private readonly CategoryRepository _categoryRepository = new();
+        private readonly ICategoryRepository _categoryRepository = new CategoryRepository();
 
         public IActionResult Index()
         {

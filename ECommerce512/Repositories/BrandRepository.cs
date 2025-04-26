@@ -8,8 +8,8 @@ using ECommerce512.Repositories.IRepositories;
 
 namespace ECommerce512.Repositories
 {
-    public class CategoryRepository : Repository<Category>, ICategoryRepository
+    public class BrandRepository : Repository<Brand>, IBrandRepository
     {
-        
+        //
     }
 }
