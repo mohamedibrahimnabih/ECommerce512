@@ -9,7 +9,7 @@
 
     <div class="row">
         <div class="col-12">
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 <input type="hidden" asp-for="@Model.Product.Id" />
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
@@ -24,9 +24,14 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label for="MainImg" class="form-label">MainImg</label>
-                    <input type="text" class="form-control" asp-for="@Model.Product.MainImg">
-                    <span asp-validation-for="@Model.Product.MainImg" class="text-danger"></span>
+                    <label for="MainImg" class="form-label">Main Img</label>
+                    <input type="file" class="form-control" id="MainImgInput" name="MainImg" onchange="previewImage(event)" value="@Model.Product.MainImg">
+
+                    @* Show existing image if any *@
+                    <img id="imgPreview" src="~/images/@(string.IsNullOrEmpty(Model.Product.MainImg) ? "#" : Url.Content(Model.Product.MainImg))"
+                         alt="Image Preview"
+                         class="img-thumbnail mt-2"
+                         style="@(string.IsNullOrEmpty(Model.Product.MainImg) ? "display: none;" : "display: block;") max-height: 200px;" />
                 </div>
                 <div class="mb-3">
                     <label for="Price" class="form-label">Price</label>
@@ -107,5 +112,21 @@
 @section Scripts {
 
     <partial name="_ValidationScriptsPartial">
+
+        <script>
+            function previewImage(event) {
+                const input = event.target;
+                const preview = document.getElementById('imgPreview');
+
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+        </script>
 
     }
