@@ -1,14 +1,26 @@
 ﻿using ECommerce512.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce512.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
+        {
+        }
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Product> Products { get; set; }
+
+
+        // Detracted
+        public ApplicationDbContext()
+        {
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -16,6 +28,5 @@ namespace ECommerce512.Data
 
             optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=ECommerce512;Integrated Security=True;TrustServerCertificate=True");
         }
-
     }
 }

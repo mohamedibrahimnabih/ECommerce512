@@ -11,8 +11,16 @@ namespace ECommerce512.Areas.Admin.Controllers
     [Area("Admin")]
     public class BrandController : Controller
     {
+        private readonly IBrandRepository _brandRepository;
+
+        public BrandController(IBrandRepository brandRepository)
+        {
+            _brandRepository = brandRepository;
+        }
+
         //private readonly ApplicationDbContext _context = new();
-        private readonly IBrandRepository _brandRepository = new BrandRepository();
+
+
 
         public IActionResult Index()
         {

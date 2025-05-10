@@ -7,7 +7,7 @@ namespace ECommerce512.Models
         public int Id { get; set; }
         [Required]
         [MinLength(3)]
-        [MaxLength(10)]
+        [MaxLength(50)]
         //[Length(3, 50)]
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
