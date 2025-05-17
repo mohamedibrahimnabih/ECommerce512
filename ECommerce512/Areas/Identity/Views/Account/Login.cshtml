@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-12">
             <form method="post">
-                <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+                <div class="text-danger" asp-validation-summary="All"></div>
                 <div class="mb-3">
                     <label for="UserNameOREmail" class="form-label">User Name OR Email</label>
                     <input class="form-control" asp-for="UserNameOREmail">
@@ -31,6 +31,9 @@
                 </div>
                 <div class="mb-3">  
                     <a href="/Identity/Account/ResendEmailConfirmation">Resend Email Confirmation</a>
+                </div>
+                <div class="mb-3">
+                    <a href="/Identity/Account/ForgetPassword">Forget Password</a>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>

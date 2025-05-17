@@ -32,6 +32,9 @@ namespace ECommerce512
 
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+            builder.Services.AddScoped<IApplicationUserOtpRepository, ApplicationUserOtpRepository>();
+            builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
+            builder.Services.AddScoped<IRoleRepository, RoleRepository>();
             builder.Services.AddTransient<IEmailSender, EmailSender>();
 
             var app = builder.Build();

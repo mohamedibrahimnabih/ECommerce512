@@ -2,6 +2,8 @@
 using ECommerce512.Models;
 using ECommerce512.Repositories;
 using ECommerce512.Repositories.IRepositories;
+using ECommerce512.Utitlity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +13,7 @@ using System.Threading.Tasks;
 namespace ECommerce512.Areas.Admin.Controllers
 {
     [Area("Admin")]
+
     public class CategoryController : Controller
     {
         //private readonly ApplicationDbContext _context;// = new();
@@ -21,6 +24,7 @@ namespace ECommerce512.Areas.Admin.Controllers
             _categoryRepository = categoryRepository;
         }
 
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin},{SD.Customer}")]
         public IActionResult Index()
         {
             var categories = _categoryRepository.Get();
@@ -28,10 +32,14 @@ namespace ECommerce512.Areas.Admin.Controllers
             return View(categories.ToList());
         }
 
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
+
         public IActionResult Create()
         {
             return View(new Category());
         }
+
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
 
         [HttpPost]
         public async Task<IActionResult> Create(Category category)
@@ -46,6 +54,7 @@ namespace ECommerce512.Areas.Admin.Controllers
 
             return View(category);
         }
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
 
         public IActionResult Edit(int id)
         {
@@ -58,6 +67,8 @@ namespace ECommerce512.Areas.Admin.Controllers
 
             return RedirectToAction("NotFoundPage", "Home");
         }
+
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
 
         [HttpPost]
         public async Task<IActionResult> Edit(Category category)
@@ -72,6 +83,7 @@ namespace ECommerce512.Areas.Admin.Controllers
 
             return View(category);
         }
+        [Authorize(Roles = $"{SD.SuperAdmin},{SD.Admin}")]
 
         public async Task<IActionResult> Delete(int id)
         {

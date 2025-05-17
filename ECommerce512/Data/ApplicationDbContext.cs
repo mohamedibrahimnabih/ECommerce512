@@ -15,6 +15,7 @@ namespace ECommerce512.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<ApplicationUserOTP> ApplicationUserOTPs { get; set; }
 
 
         // Detracted

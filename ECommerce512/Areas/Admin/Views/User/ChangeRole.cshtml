@@ -1,0 +1,33 @@
+﻿@model UserWithRolesVM
+
+<div class="container my-3">
+    <div class="row mb-3 align-items-center">
+        <div class="col-md-12">
+            <h2 class="display-6">Edit User Role</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <form method="post">
+                <input type="hidden" asp-for="ApplicationUser.Id" />
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input class="form-control" asp-for="@Model.ApplicationUser.UserName">
+                    <span asp-validation-for="ApplicationUser.UserName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label for="Role" class="form-label">Role</label>
+                    <select class="form-select" name="Role">
+                        @foreach (var item in Model.IdentityRoles)
+                        {
+                            <option value="@item.Name">@item.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="IdentityRoles" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>

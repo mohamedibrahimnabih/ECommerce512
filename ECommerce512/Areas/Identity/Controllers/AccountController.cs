@@ -1,10 +1,15 @@
 ﻿using ECommerce512.Models;
 using ECommerce512.Models.ViewModels;
+using ECommerce512.Repositories;
+using ECommerce512.Repositories.IRepositories;
 using ECommerce512.Utitlity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using NuGet.Common;
 using System.Threading.Tasks;
 
 namespace ECommerce512.Areas.Identity.Controllers
@@ -15,16 +20,28 @@ namespace ECommerce512.Areas.Identity.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
+        private readonly IApplicationUserOtpRepository _applicationUserOtpRepository;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender, IApplicationUserOtpRepository applicationUserOtpRepository, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _applicationUserOtpRepository = applicationUserOtpRepository;
+            _roleManager = roleManager;
         }
 
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
+            if(_roleManager.Roles.IsNullOrEmpty())
+            {
+                await _roleManager.CreateAsync(new(SD.SuperAdmin));
+                await _roleManager.CreateAsync(new(SD.Admin));
+                await _roleManager.CreateAsync(new(SD.Company));
+                await _roleManager.CreateAsync(new(SD.Customer));
+            }
+
             return View();
         }
 
@@ -52,6 +69,8 @@ namespace ECommerce512.Areas.Identity.Controllers
                 var confirmationLink = Url.Action("ConfirmEmail", "Account", new { area = "Identity", applicationUser.Id, token }, Request.Scheme);
 
                 await _emailSender.SendEmailAsync(applicationUser.Email, "Confirmation Email", $"<h1>Confirm Your Account By Click <a href='{confirmationLink}'>Here</a></h1>");
+
+                await _userManager.AddToRoleAsync(applicationUser, SD.Customer);
 
                 TempData["Notification"] = "Add Account successfully, Confirm Your Account";
 
@@ -90,6 +109,12 @@ namespace ECommerce512.Areas.Identity.Controllers
 
             if(applicationUser is not null)
             {
+
+                if(!applicationUser.LockoutEnabled)
+                {
+                    ModelState.AddModelError(string.Empty, $"You have block {applicationUser.LockoutEnd}");
+                    return View(loginVM);
+                }
 
                 var result = await _userManager.CheckPasswordAsync(applicationUser, loginVM.Password);
 
@@ -185,6 +210,118 @@ namespace ECommerce512.Areas.Identity.Controllers
 
             ModelState.AddModelError("UserNameOREmail", "Invalid User Name Or Email");
             return View(resendEmailConfirmationVM);
+        }
+
+        public IActionResult ForgetPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordVM forgetPasswordVM)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(forgetPasswordVM);
+            }
+
+            var applicationUser = await _userManager.FindByEmailAsync(forgetPasswordVM.UserNameOREmail);
+
+            if (applicationUser is null)
+            {
+                applicationUser = await _userManager.FindByNameAsync(forgetPasswordVM.UserNameOREmail);
+            }
+
+            if (applicationUser is not null)
+            {
+                
+                string token = await _userManager.GeneratePasswordResetTokenAsync(applicationUser);
+
+                var otpNumber = new Random().Next(1000, 9999);
+
+                //var resetPassword = Url.Action("ResetPassword", "Account", new { area = "Identity", ApplicationUserId = applicationUser.Id, Token = token }, Request.Scheme);
+
+                //await _emailSender.SendEmailAsync(applicationUser.Email, "Reset Password", $"<h1>Reset Password Account By Click <a href='{resetPassword}'>Here</a></h1>");
+
+                var otpInDB = _applicationUserOtpRepository.Get(e => e.ApplicationUserId == applicationUser.Id).LastOrDefault();
+
+                if(otpInDB is not null && (DateTime.UtcNow - otpInDB.ReleaseData).TotalMinutes > 10)
+                {
+                    await _applicationUserOtpRepository.CreateAsync(new()
+                    {
+                        ApplicationUserId = applicationUser.Id,
+                        OTP = otpNumber,
+                        ReleaseData = DateTime.UtcNow,
+                        ExpirationData = DateTime.UtcNow.AddMinutes(2)
+                    });
+                    await _applicationUserOtpRepository.CommitAsync();
+
+                    await _emailSender.SendEmailAsync(applicationUser.Email, "Reset Password", $"<h1>Reset Password Account By this number {otpNumber}</h1>");
+
+                    TempData["Notification"] = "Check Your email, you find otp";
+                    TempData["_ValidationToken"] = Guid.NewGuid().ToString();
+
+                    return RedirectToAction("ResetPassword", "Account", new { area = "Identity", ApplicationUserId = applicationUser.Id, Token = token });
+                }
+
+                ModelState.AddModelError(String.Empty, "There is error");
+                return View(forgetPasswordVM);
+            }
+
+            ModelState.AddModelError("UserNameOREmail", "Invalid User Name Or Email");
+            return View(forgetPasswordVM);
+        }
+
+        public IActionResult ResetPassword()
+        {
+            if(TempData["_ValidationToken"] is not null)
+            {
+                return View();
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordVM resetPasswordVM)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(resetPasswordVM);
+            }
+
+            var applicationUser = await _userManager.FindByIdAsync(resetPasswordVM.ApplicationUserId);
+
+            if(applicationUser is not null)
+            {
+
+                var otpInDB = _applicationUserOtpRepository.Get(e => e.ApplicationUserId == resetPasswordVM.ApplicationUserId).LastOrDefault();
+
+                if (otpInDB.OTP == resetPasswordVM.OTP && otpInDB.ExpirationData <= DateTime.UtcNow)
+                {
+                    var result = await _userManager.ResetPasswordAsync(applicationUser, resetPasswordVM.Token, resetPasswordVM.Password);
+
+
+                    if (result.Succeeded)
+                    {
+                        TempData["Notification"] = "Reset Password Successfully";
+
+                        return RedirectToAction("Index", "Home", new { area = "Customer" });
+                    }
+                    else
+                    {
+                        foreach (var item in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, item.Description);
+                        }
+                    }
+                }
+
+                ModelState.AddModelError("OTP", "Invalid OTP or Expired");
+                return View(resetPasswordVM);
+            }
+
+            return BadRequest();
         }
     }
 }
