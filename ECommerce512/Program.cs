@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using ECommerce512.Utitlity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Stripe;
 
 namespace ECommerce512
 {
@@ -36,6 +37,9 @@ namespace ECommerce512
             builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
             builder.Services.AddScoped<IRoleRepository, RoleRepository>();
             builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             var app = builder.Build();
 
